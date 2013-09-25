@@ -1,0 +1,136 @@
+<policy-set id="policySetId1" combine="first-matching-target" description="defaultPolicy">
+
+    <policy-set id="policySetId2" combine="first-matching-target" description="ownerPolicy">
+        <target>
+            <subject>
+                <subject-match attr="user-id" match="owner"/>
+            </subject>
+        </target>
+        <policy id="ownerPhone" combine="first-applicable" description="zoneOwnerPhone">
+            <target>
+                <subject>
+                    <subject-match attr="requestor-id" match="Phone"/>
+                </subject>
+            </target>
+            <rule id="r1" effect="deny">
+                <condition combine="or">
+                    <resource-match attr="service-id" match="service1"/>
+                </condition>
+            </rule>
+            <rule id="r2" effect="permit"></rule>
+        </policy>
+        <policy id="ownerCar" combine="first-applicable" description="zoneOwnerCar">
+            <target>
+                <subject>
+                    <subject-match attr="requestor-id" match="Car"/>
+                </subject>
+            </target>
+            <rule id="r3" effect="deny">
+                <condition combine="or">
+                    <resource-match attr="service-id" match="service2"/>
+                </condition>
+            </rule>
+            <rule id="r4" effect="permit"></rule>
+        </policy>
+        <policy id="ownerDefault" combine="first-applicable" description="zoneOwnerDefault">
+            <rule id="r5" effect="permit"></rule>
+        </policy>
+    </policy-set>
+
+    <policy-set id="policySetId2" combine="first-matching-target" description="friend1Policy">
+        <target>
+            <subject>
+                <subject-match attr="user-id" match="friend1"/>
+            </subject>
+        </target>
+        <policy id="friend1TV" combine="first-applicable" description="firstFriendTV">
+            <target>
+                <subject>
+                    <subject-match attr="requestor-id" match="TV"/>
+                </subject>
+            </target>
+            <rule id="r6" effect="permit">
+                <condition combine="or">
+                    <resource-match attr="service-id" match="service1"/>
+                    <resource-match attr="service-id" match="service3"/>
+                </condition>
+            </rule>
+            <rule id="r7" effect="deny"></rule>
+        </policy>
+        <policy id="friend1Tablet" combine="first-applicable" description="firstFriendTablet">
+            <target>
+                <subject>
+                    <subject-match attr="requestor-id" match="Tablet"/>
+                </subject>
+            </target>
+            <rule id="r8" effect="permit">
+                <condition combine="or">
+                    <resource-match attr="service-id" match="service1"/>
+                    <resource-match attr="service-id" match="service2"/>
+                </condition>
+            </rule>
+            <rule id="r9" effect="deny"></rule>
+        </policy>
+        <policy id="friend1Default" combine="first-applicable" description="firstFriendDefault">
+            <rule id="r9" effect="deny"></rule>
+        </policy>
+    </policy-set>
+
+    <policy-set id="policySetId3" combine="first-matching-target" description="friend2Policy">
+        <target>
+            <subject>
+                <subject-match attr="user-id" match="friend2"/>
+            </subject>
+        </target>
+        <policy id="friend2Laptop" combine="first-applicable" description="secondFriendLaptop">
+            <target>
+                <subject>
+                    <subject-match attr="requestor-id" match="Laptop"/>
+                </subject>
+            </target>
+            <rule id="r10" effect="permit">
+                <condition combine="or">
+                    <resource-match attr="service-id" match="service2"/>
+                    <resource-match attr="service-id" match="service3"/>
+                </condition>
+            </rule>
+            <rule id="r11" effect="deny"></rule>
+        </policy>
+        <policy id="friend2Phone" combine="first-applicable" description="secondFriendPhone">
+            <target>
+                <subject>
+                    <subject-match attr="requestor-id" match="Phone"/>
+                </subject>
+            </target>
+            <rule id="r12" effect="permit">
+                <condition combine="or">
+                    <resource-match attr="service-id" match="service4"/>
+                </condition>
+            </rule>
+            <rule id="r13" effect="deny"></rule>
+        </policy>
+        <policy id="friend2Default" combine="first-applicable" description="secondFriendDefault">
+            <rule id="r14" effect="deny"></rule>
+        </policy>
+    </policy-set>
+
+    <policy-set id="policySetId4" combine="first-matching-target" description="defaultPolicy">
+        <policy id="Default" combine="first-applicable" description="Default">
+            <rule id="r15" effect="deny"></rule>
+        </policy>
+    </policy-set>
+
+    <DataHandlingPreferences PolicyId="#DHP_allow_all">
+        <AuthorizationsSet>
+            <AuthzUseForPurpose>
+                <Purpose/>
+            </AuthzUseForPurpose>
+        </AuthorizationsSet>
+    </DataHandlingPreferences>
+    <ProvisionalActions>
+        <ProvisionalAction>
+            <AttributeValue>#DHP_allow_all</AttributeValue>
+            <AttributeValue>*</AttributeValue>
+        </ProvisionalAction>
+    </ProvisionalActions>
+</policy-set>
