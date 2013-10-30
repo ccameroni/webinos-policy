@@ -20,7 +20,7 @@
 #include "PolicySet.h"
 #include "../../debug.h"
 
-PolicySet::PolicySet(TiXmlElement* set, DHPrefs* dhp) :
+PolicySet::PolicySet(TiXmlElement* set, DHPrefs* dhp, map<string, vector<string>*> *pip) :
 		IPolicyBase(set), datahandlingpreferences(dhp) {
 	iType = POLICY_SET;
 	policyCombiningAlgorithm =
@@ -34,7 +34,7 @@ PolicySet::PolicySet(TiXmlElement* set, DHPrefs* dhp) :
 		for (TiXmlElement * child = (TiXmlElement*) target->FirstChild(
 				"subject"); child; child =
 				(TiXmlElement*) child->NextSibling()) {
-			subjects.push_back(new Subject(child));
+			subjects.push_back(new Subject(child, pip));
 		}
 	}
 
@@ -47,7 +47,7 @@ PolicySet::PolicySet(TiXmlElement* set, DHPrefs* dhp) :
 		(*dhp)[child->Attribute(policyIdTag.c_str())] =
 				new DataHandlingPreferences(child);
 	}
-	LOGD("PolicySet DHPref number: %d", (*dhp).size());
+	LOGD("PolicySet DHPref number: %lu", (*dhp).size());
 
 	//init ProvisionalActions
 	for (TiXmlElement * child = static_cast<TiXmlElement*>(set->FirstChild(
@@ -66,11 +66,11 @@ PolicySet::PolicySet(TiXmlElement* set, DHPrefs* dhp) :
 			continue;
 
 		if (child->ValueStr() == "policy-set") {
-			PolicySet * set = new PolicySet(child, dhp);
+			PolicySet * set = new PolicySet(child, dhp, pip);
 			policysets.push_back(set);
 			sortArray.push_back(set);
 		} else if (child->ValueStr() == "policy") {
-			Policy * policy = new Policy(child, dhp);
+			Policy * policy = new Policy(child, dhp, pip);
 			policies.push_back(policy);
 			sortArray.push_back(policy);
 		}
@@ -423,7 +423,7 @@ void PolicySet::selectDHPref(Request* req, pair<string, bool>* selectedDHPref) {
 
 	if ((*selectedDHPref).second == false) {
 		// search for a provisional action with a resource matching the request
-		LOGD("PolicySet: looking for DHPref in %d ProvisionalActions",
+		LOGD("PolicySet: looking for DHPref in %lu ProvisionalActions",
 				provisionalactions.size());
 		for (unsigned int i = 0; i < provisionalactions.size(); i++) {
 			LOGD("PolicySet: ProvisionalActions %d evaluation", i);

@@ -88,7 +88,7 @@ Condition::~Condition()
 	}
 
 ConditionResponse Condition::evaluate(Request * req){
-	LOGD("[COND EVALUATE] combine : %d size : %d",combine,conditions.size());
+	LOGD("[COND EVALUATE] combine : %d size : %lu",combine,conditions.size());
 	ConditionResponse tmpCR;
 	bool anyUndetermined = false;
 	
@@ -267,7 +267,7 @@ ConditionResponse Condition::evaluateEnvironment(Request* req){
 		}
 		if(my_roaming != NULL){
 			string req_roaming = requestEnvironment_attrs["roaming"];
-			LOGD("[ENVIRONMENT] confronto : %s con %s",req_roaming.data(),my_roaming->value.data());
+			LOGD("[ENVIRONMENT] compare : %s with %s",req_roaming.data(),my_roaming->value.data());
 			if(!equals(req_roaming, my_roaming->value, string2strcmp_mode(my_roaming->equal_func)))
 				return NO_MATCH;
 		}
@@ -289,7 +289,7 @@ ConditionResponse Condition::evaluateEnvironment(Request* req){
 }
 
 ConditionResponse Condition::evaluateFeatures(Request* req){
-	LOGD("[COND EVALUATE FEAT] 1 : %d",resource_attrs.size());
+	LOGD("[COND EVALUATE FEAT] 1 : %lu",resource_attrs.size());
 	map<string,vector<match_info_str*> >::iterator it;
 	vector<match_info_str*> my_features = (it = resource_attrs.find(API_FEATURE))!=resource_attrs.end() 
 			? it->second 
@@ -354,7 +354,7 @@ ConditionResponse Condition::evaluateFeatures(Request* req){
 }
 
 ConditionResponse Condition::evaluateCapabilities(Request* req){
-	LOGD("condition: device-cap size %d",req->getResourceAttrs()["device-cap"]->size());
+	LOGD("condition: device-cap size %lu",req->getResourceAttrs()["device-cap"]->size());
 	vector<match_info_str*> my_capabilities_params;
 	vector<string>* req_capabilities_params = new vector<string>();
 	map<string, vector<string>* > requestResource_attrs = req->getResourceAttrs();
@@ -392,26 +392,26 @@ ConditionResponse Condition::evaluateCapabilities(Request* req){
 	
 	if(combine == AND){
 		// find any No Match
-		LOGD("my_capabilities_params.size() %d",my_capabilities_params.size());
+		LOGD("my_capabilities_params.size() %lu",my_capabilities_params.size());
 		for(unsigned int j=0; j<my_capabilities_params.size(); j++){
 			found = false;
-			LOGD("req_capabilities_params->size() %d",req_capabilities_params->size());
+			LOGD("req_capabilities_params->size() %lu",req_capabilities_params->size());
 			for(unsigned int i=0; i<req_capabilities_params->size(); i++){
 				string mod_function = my_capabilities_params[j]->mod_func;
 				string s = (mod_function != "") 
 							? modFunction(mod_function, req_capabilities_params->at(i))
 							: req_capabilities_params->at(i);
 				
-				LOGD("Confronto %s con %s",s.data(),my_capabilities_params[j]->value.data());
+				LOGD("compare %s with %s",s.data(),my_capabilities_params[j]->value.data());
 				if(equals(s.data(),my_capabilities_params[j]->value.data(), string2strcmp_mode(my_capabilities_params[j]->equal_func)))
 //				if(equals(req_capabilities_params->at(i).data(),my_capabilities_params[j]->value.data(), string2strcmp_mode(my_capabilities_params[j]->equal_func)))
 				{
-					LOGD("UGUALI");
+					LOGD("They are equals");
 					found = true;
 					break;
 				}
 				else
-					LOGD("DIVERSI");
+					LOGD("They are not equals");
 			}
 			if (found == false)
 				return NO_MATCH;
